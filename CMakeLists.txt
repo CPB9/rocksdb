@@ -228,7 +228,7 @@ endif()
 
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(SYSTEM ${PROJECT_SOURCE_DIR}/third-party/gtest-1.7.0/fused-src)
+#include_directories(SYSTEM ${PROJECT_SOURCE_DIR}/third-party/gtest-1.7.0/fused-src)
 
 find_package(Threads REQUIRED)
 if(WIN32)
@@ -240,7 +240,7 @@ endif()
 set(ROCKSDB_LIBS rocksdblib${ARTIFACT_SUFFIX})
 set(LIBS ${ROCKSDB_LIBS} ${THIRDPARTY_LIBS} ${SYSTEM_LIBS})
 
-add_subdirectory(third-party/gtest-1.7.0/fused-src/gtest)
+#add_subdirectory(third-party/gtest-1.7.0/fused-src/gtest)
 add_subdirectory(tools)
 
 # Main library source code
@@ -616,13 +616,13 @@ set(BENCHMARKS
   db/memtablerep_bench.cc
   utilities/column_aware_encoding_exp.cc
   utilities/persistent_cache/hash_table_bench.cc)
-add_library(testharness OBJECT util/testharness.cc)
-foreach(sourcefile ${BENCHMARKS})
-  get_filename_component(exename ${sourcefile} NAME_WE)
-  add_executable(${exename}${ARTIFACT_SUFFIX} ${sourcefile}
-    $<TARGET_OBJECTS:testharness>)
-  target_link_libraries(${exename}${ARTIFACT_SUFFIX} ${LIBS} gtest)
-endforeach(sourcefile ${BENCHMARKS})
+#add_library(testharness OBJECT util/testharness.cc)
+#foreach(sourcefile ${BENCHMARKS})
+#  get_filename_component(exename ${sourcefile} NAME_WE)
+#  add_executable(${exename}${ARTIFACT_SUFFIX} ${sourcefile}
+#    $<TARGET_OBJECTS:testharness>)
+#  target_link_libraries(${exename}${ARTIFACT_SUFFIX} ${LIBS} gtest)
+#endforeach(sourcefile ${BENCHMARKS})
 
 # For test util library that is build only in DEBUG mode
 # and linked to tests. Add test only code that is not #ifdefed for Release here.
@@ -635,51 +635,51 @@ set(TESTUTIL_SOURCE
 )
 # test utilities are only build in debug
 enable_testing()
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
-set(TESTUTILLIB testutillib${ARTIFACT_SUFFIX})
-add_library(${TESTUTILLIB} STATIC ${TESTUTIL_SOURCE})
-if(WIN32)
-  set_target_properties(${TESTUTILLIB} PROPERTIES COMPILE_FLAGS "/Fd${CMAKE_CFG_INTDIR}/testutillib${ARTIFACT_SUFFIX}.pdb")
-endif()
-set_target_properties(${TESTUTILLIB}
-      PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD_RELEASE 1
-      EXCLUDE_FROM_DEFAULT_BUILD_MINRELEASE 1
-      EXCLUDE_FROM_DEFAULT_BUILD_RELWITHDEBINFO 1
-      )
+#add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+#set(TESTUTILLIB testutillib${ARTIFACT_SUFFIX})
+#add_library(${TESTUTILLIB} STATIC ${TESTUTIL_SOURCE})
+#if(WIN32)
+#  set_target_properties(${TESTUTILLIB} PROPERTIES COMPILE_FLAGS "/Fd${CMAKE_CFG_INTDIR}/testutillib${ARTIFACT_SUFFIX}.pdb")
+#endif()
+#set_target_properties(${TESTUTILLIB}
+#      PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD_RELEASE 1
+#      EXCLUDE_FROM_DEFAULT_BUILD_MINRELEASE 1
+#      EXCLUDE_FROM_DEFAULT_BUILD_RELWITHDEBINFO 1
+#      )
 
 # Tests are excluded from Release builds
-set(TEST_EXES ${TESTS})
+#set(TEST_EXES ${TESTS})
 
-foreach(sourcefile ${TEST_EXES})
-    get_filename_component(exename ${sourcefile} NAME_WE)
-    add_executable(${exename}${ARTIFACT_SUFFIX} ${sourcefile}
-      $<TARGET_OBJECTS:testharness>)
-    set_target_properties(${exename}${ARTIFACT_SUFFIX}
-      PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD_RELEASE 1
-      EXCLUDE_FROM_DEFAULT_BUILD_MINRELEASE 1
-      EXCLUDE_FROM_DEFAULT_BUILD_RELWITHDEBINFO 1
-      )
-    target_link_libraries(${exename}${ARTIFACT_SUFFIX} testutillib${ARTIFACT_SUFFIX} ${LIBS} gtest)
-    if(NOT "${exename}" MATCHES "db_sanity_test")
-      add_test(NAME ${exename} COMMAND ${exename}${ARTIFACT_SUFFIX})
-      add_dependencies(check ${exename}${ARTIFACT_SUFFIX})
-    endif()
-endforeach(sourcefile ${TEST_EXES})
+#foreach(sourcefile ${TEST_EXES})
+#    get_filename_component(exename ${sourcefile} NAME_WE)
+#    add_executable(${exename}${ARTIFACT_SUFFIX} ${sourcefile}
+#      $<TARGET_OBJECTS:testharness>)
+#    set_target_properties(${exename}${ARTIFACT_SUFFIX}
+#      PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD_RELEASE 1
+#      EXCLUDE_FROM_DEFAULT_BUILD_MINRELEASE 1
+#      EXCLUDE_FROM_DEFAULT_BUILD_RELWITHDEBINFO 1
+#      )
+#    target_link_libraries(${exename}${ARTIFACT_SUFFIX} testutillib${ARTIFACT_SUFFIX} ${LIBS} gtest)
+#    if(NOT "${exename}" MATCHES "db_sanity_test")
+#      add_test(NAME ${exename} COMMAND ${exename}${ARTIFACT_SUFFIX})
+#      add_dependencies(check ${exename}${ARTIFACT_SUFFIX})
+#    endif()
+#endforeach(sourcefile ${TEST_EXES})
 
 # C executables must link to a shared object
 set(C_TESTS db/c_test.c)
 set(C_TEST_EXES ${C_TESTS})
 
-foreach(sourcefile ${C_TEST_EXES})
-    string(REPLACE ".c" "" exename ${sourcefile})
-    string(REGEX REPLACE "^((.+)/)+" "" exename ${exename})
-    add_executable(${exename}${ARTIFACT_SUFFIX} ${sourcefile})
-    set_target_properties(${exename}${ARTIFACT_SUFFIX}
-      PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD_RELEASE 1
-      EXCLUDE_FROM_DEFAULT_BUILD_MINRELEASE 1
-      EXCLUDE_FROM_DEFAULT_BUILD_RELWITHDEBINFO 1
-      )
-    target_link_libraries(${exename}${ARTIFACT_SUFFIX} rocksdb${ARTIFACT_SUFFIX} testutillib${ARTIFACT_SUFFIX})
-    add_test(NAME ${exename} COMMAND ${exename}${ARTIFACT_SUFFIX})
-    add_dependencies(check ${exename}${ARTIFACT_SUFFIX})
-endforeach(sourcefile ${C_TEST_EXES})
+#foreach(sourcefile ${C_TEST_EXES})
+#    string(REPLACE ".c" "" exename ${sourcefile})
+#    string(REGEX REPLACE "^((.+)/)+" "" exename ${exename})
+#    add_executable(${exename}${ARTIFACT_SUFFIX} ${sourcefile})
+#    set_target_properties(${exename}${ARTIFACT_SUFFIX}
+#      PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD_RELEASE 1
+#      EXCLUDE_FROM_DEFAULT_BUILD_MINRELEASE 1
+#      EXCLUDE_FROM_DEFAULT_BUILD_RELWITHDEBINFO 1
+#      )
+#    target_link_libraries(${exename}${ARTIFACT_SUFFIX} rocksdb${ARTIFACT_SUFFIX} testutillib${ARTIFACT_SUFFIX})
+#    add_test(NAME ${exename} COMMAND ${exename}${ARTIFACT_SUFFIX})
+#    add_dependencies(check ${exename}${ARTIFACT_SUFFIX})
+#endforeach(sourcefile ${C_TEST_EXES})
